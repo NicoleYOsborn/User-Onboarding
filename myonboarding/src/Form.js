@@ -17,7 +17,7 @@ function Form(props) {
           
           <label htmlFor="memberNameInput">
           Name
-          <input id="membernameInput" value={values.membrname} onChange={onInputChange} type="text" name="membername" placeholder="First and Last Name" />
+          <input id="memberNameInput" value={values.membername} onChange={onInputChange} type="text" name="membername" placeholder="First and Last Name" />
         </label>
         <label htmlFor="emailInput">
           Email
@@ -29,13 +29,13 @@ function Form(props) {
         </label>
         <label htmlFor="termsInput">
           Do you agree to the terms and conditions?
-          <input id="termsInput" onChange={onCheckboxChange} checked={values.terms} type="checkbox" name="terms" />
+          <input id="termsInput" onChange={onCheckboxChange}  type="checkbox" name="terms" value={values.terms} />
         </label>
         <button disabled={disabled}>Submit!</button>
 
         <div className='errors'>
           {/* 🔥 RENDER THE VALIDATION ERRORS HERE */}
-          <div>{errors.memername}</div>
+          <div>{errors.membername}</div>
           <div>{errors.email.length > 0 ? (<p className="error">{errors.email}</p>) : null}</div>
           <div>{errors.password.length > 6 ? (<p className="error">{errors.password}</p>) : null}</div>
           <div>{errors.terms}</div>

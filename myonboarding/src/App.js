@@ -9,13 +9,13 @@ const initialFormValues = {
   membername: "",
   email: "",
   password: "",
-  terms: false,
+  terms: false
+  
 };
 const initialFormErrors = {
   membername: '',
   email: '',
   password: '',
-  terms: '',
 }
 const initialMembers=[]
 const initialDisabled = true
@@ -26,26 +26,13 @@ function App() {
   const [formErrors, setFormErrors] = useState(initialFormErrors)
   const [disabled, setDisabled] = useState(initialDisabled)
 
-  // const getMembers = () => {
-  //   // 🔥 STEP 6- IMPLEMENT! ON SUCCESS PUT FRIENDS IN STATE
-  //   //    helper to [GET] all friends from `http://localhost:4000/friends`
-  //   axios.get('http://localhost:4000/members')
-  //     .then(res => {
-  //       setMembers(res.data)
-  //     })
-  //     .catch(err => {
-  //       debugger
-  //     })
-  // }
 
   const postNewMember = newMember => {
-    // 🔥 STEP 7- IMPLEMENT! ON SUCCESS ADD NEWLY CREATED FRIEND TO STATE
-    //    helper to [POST] `newFriend` to `http://localhost:4000/friends`
-    //    and regardless of success or failure, the form should reset
+
     axios.post('https://reqres.in/api/users', newMember)
       .then(res => {
         setMembers([res.data, ...members])
-        // getFriends() // the price of triggering a new 'getFriends`
+        console.log(res.data)
       })
       .catch(err => {
         debugger
@@ -59,35 +46,37 @@ function App() {
     /* e.persist allows us to use the synthetic event in an async manner.
     We need to be able to use it after the form validation */
     e.persist();
-
+    const name = e.target.name
+    const value = e.target.value
     yup
-    .reach(formSchema, e.target.name)
+    .reach(formSchema, name)
     //we can then run validate using the value
-    .validate(e.target.value)
+    .validate(value)
     // if the validation is successful, we can clear the error message
     .then(valid => {
       setFormErrors({
         ...formErrors,
-        [e.target.name]: ""
+        [name]: ""
       });
+
     })
     /* if the validation is unsuccessful, we can set the error message to the message 
       returned from yup (that we created in our schema) */
     .catch(err => {
       setFormErrors({
         ...formErrors,
-        [e.target.name]: err.errors[0]
+        [name]: err.errors[0]
       });
     });
 
   // Wether or not our validation was successful, we will still set the state to the new value as the user is typing
   setFormValues({
     ...formValues,
-    [e.target.name]: e.target.value
+    [name]: value
   });
 };
 const onCheckboxChange = evt => {
-  // 🔥 STEP 8- IMPLEMENT!
+ console.log(evt.target.value)
   // a) pull the `name` of the checkbox from the event
   const { name } = evt.target
   // b) pull whether `checked` true or false, from the event
@@ -95,15 +84,10 @@ const onCheckboxChange = evt => {
 
   // c) set a new state for the whole form
   setFormValues({
-    // copy formvalues
-    ...formValues,
+    ...formValues.terms,
     // override one thing inside formvalues
-    terms: {
-      // copy the current hobbies
-      ...formValues.terms,
-      // override one of the hobbies
-      [name]: checked,  // NOT AN ARRAY
-    }
+    [name]: checked,  // NOT AN ARRAY
+    
   })
 }
 
@@ -111,12 +95,13 @@ const onSubmit = evt => {
   evt.preventDefault()
 
   const newMember = {
-    membername: formValues.membrname.trim(),
+    membername: formValues.membername.trim(),
     email: formValues.email.trim(),
     password: formValues.password,
     terms: formValues.terms === true,
   
   }
+  console.log(JSON.stringify(newMember))
   postNewMember(newMember)
 }
 
@@ -124,8 +109,10 @@ useEffect(() => {
   /* We pass the entire state into the entire schema, no need to use reach here. 
   We want to make sure it is all valid before we allow a user to submit
   isValid comes from Yup directly */
-  formSchema.isValid(formValues).then(valid => {
-    setDisabled(!valid);
+  formSchema.isValid(formValues)
+    .then(valid => {
+      console.log('this is valid', valid)
+      setDisabled(!valid);
   });
 }, [formValues]);
 
@@ -142,7 +129,7 @@ useEffect(() => {
       onSubmit={onSubmit}
       disabled={disabled}
       errors={formErrors}
-      onCheckBoxChange={onCheckboxChange}/>
+      onCheckboxChange={onCheckboxChange}/>
     </div>
   );
 }
