@@ -16,7 +16,7 @@ const formSchema = yup.object().shape({
     terms: yup
       .boolean()
       .oneOf([true], "You must accept Terms and Conditions")
-      // required isn't required for checkboxes.
+      .required("You must accept Terms and Conditions")
   });
 
   export default formSchema;

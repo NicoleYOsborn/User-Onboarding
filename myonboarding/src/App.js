@@ -18,13 +18,13 @@ const initialFormErrors = {
   password: '',
 }
 const initialMembers=[]
-const initialDisabled = true
+
 
 function App() {
   const [members, setMembers] = useState(initialMembers)
   const [formValues, setFormValues] = useState(initialFormValues)
   const [formErrors, setFormErrors] = useState(initialFormErrors)
-  const [disabled, setDisabled] = useState(initialDisabled)
+  const [disabled, setDisabled] = useState(true)
 
 
   const postNewMember = newMember => {
@@ -53,7 +53,7 @@ function App() {
     //we can then run validate using the value
     .validate(value)
     // if the validation is successful, we can clear the error message
-    .then(valid => {
+    .then(()=> {
       setFormErrors({
         ...formErrors,
         [name]: ""
@@ -80,13 +80,13 @@ const onCheckboxChange = evt => {
   // a) pull the `name` of the checkbox from the event
   const { name } = evt.target
   // b) pull whether `checked` true or false, from the event
-  const { checked } = evt.target
+  const { checked } = evt.target.value
 
   // c) set a new state for the whole form
   setFormValues({
-    ...formValues.terms,
+    ...formValues,
     // override one thing inside formvalues
-    [name]: checked,  // NOT AN ARRAY
+    [name]: !checked,  // NOT AN ARRAY
     
   })
 }
@@ -98,7 +98,7 @@ const onSubmit = evt => {
     membername: formValues.membername.trim(),
     email: formValues.email.trim(),
     password: formValues.password,
-    terms: formValues.terms === true,
+    
   
   }
   console.log(JSON.stringify(newMember))
@@ -106,15 +106,9 @@ const onSubmit = evt => {
 }
 
 useEffect(() => {
-  /* We pass the entire state into the entire schema, no need to use reach here. 
-  We want to make sure it is all valid before we allow a user to submit
-  isValid comes from Yup directly */
   formSchema.isValid(formValues)
-    .then(valid => {
-      console.log('this is valid', valid)
-      setDisabled(!valid);
-  });
-}, [formValues]);
+    .then(valid => setDisabled(!valid))
+}, [formValues])
 
   return (
     <div className="App">
@@ -130,6 +124,7 @@ useEffect(() => {
       disabled={disabled}
       errors={formErrors}
       onCheckboxChange={onCheckboxChange}/>
+      <pre>{JSON.stringify(members, null, 2)}</pre>
     </div>
   );
 }
